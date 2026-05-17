@@ -23,7 +23,33 @@ class TicketResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+                    
+                Select::make('department_id')
+                    ->relationship('department', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+                    
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(255),
+                    
+                Textarea::make('description')
+                    ->required()
+                    ->columnSpanFull(),
+                    
+                Select::make('status')
+                    ->options([
+                        'open' => 'Open',
+                        'closed' => 'Closed',
+                    ])
+                    ->default('open')
+                    ->required(),
             ]);
     }
 
@@ -31,7 +57,18 @@ class TicketResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('title')
+                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->sortable(),
+                TextColumn::make('department.name')
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'open' => 'warning',
+                        'closed' => 'success',
+                    }),
             ])
             ->filters([
                 //

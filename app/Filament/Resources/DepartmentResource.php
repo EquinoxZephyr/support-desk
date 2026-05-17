@@ -23,7 +23,10 @@ class DepartmentResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')
+                ->required()
+                ->unique(ignoringRecord: true)
+                ->maxLength(255),
             ]);
     }
 
@@ -31,7 +34,13 @@ class DepartmentResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
