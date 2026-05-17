@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
 
 class DepartmentResource extends Resource
 {
@@ -25,7 +27,7 @@ class DepartmentResource extends Resource
             ->schema([
                 TextInput::make('name')
                 ->required()
-                ->unique(ignoringRecord: true)
+                ->unique(ignoreRecord: true)
                 ->maxLength(255),
             ]);
     }

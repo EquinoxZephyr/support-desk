@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
 
 class TicketResource extends Resource
 {
@@ -28,21 +30,21 @@ class TicketResource extends Resource
                     ->required()
                     ->searchable()
                     ->preload(),
-                    
+
                 Select::make('department_id')
                     ->relationship('department', 'name')
                     ->required()
                     ->searchable()
                     ->preload(),
-                    
+
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                    
+
                 Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
-                    
+
                 Select::make('status')
                     ->options([
                         'open' => 'Open',
