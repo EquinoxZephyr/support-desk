@@ -32,7 +32,10 @@ class TicketResource extends Resource
                     ->relationship('user', 'name')
                     ->required()
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->default(fn () => Auth::id())
+                    ->hidden(fn () => !Auth::user()->hasAnyRole(['super_admin', 'IT Tech']))
+                    ->dehydrated(),
 
                 Select::make('department_id')
                     ->relationship('department', 'name')
@@ -54,7 +57,9 @@ class TicketResource extends Resource
                         'closed' => 'Closed',
                     ])
                     ->default('open')
-                    ->required(),
+                    ->required()
+                    ->hidden(fn () => !Auth::user()->hasAnyRole(['super_admin', 'IT Tech']))
+                    ->dehydrated(),
             ]);
     }
 
@@ -114,6 +119,22 @@ class TicketResource extends Resource
 
         if ($user->hasRole('IT Tech')) {
             return parent::getEloquentQuery();
+        }
+
+        if ($user->hasRole('Department Manager')) {
+            if ($user->department_id) {
+                return parent::getEloquentQuery()
+                ->where('department_id', $user->department_id)
+                ->orWhere('user_id', $user->id);
+            }
+
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        if ($user->hasRole('Facilities Team')) {
+            return parent::getEloquentQuery()
+                ->where('department_id', 4)
+                ->orWhere('user_id', $user->id);
         }
 
         return parent::getEloquentQuery()->where('user_id', $user->id);

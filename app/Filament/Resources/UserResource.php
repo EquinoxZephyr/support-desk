@@ -35,7 +35,11 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
-
+                Select::make('department_id')
+                    ->relationship('department', 'name')
+                    ->placeholder('No Department Assigned')
+                    ->searchable()
+                    ->preload(),
                 Select::make('roles')
                     ->relationship('roles', 'name')
                     ->multiple()
@@ -55,6 +59,9 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')
                     ->badge()
                     ->color('primary'),
+                TextColumn::make('department.name')
+                    ->searchable()
+                    ->placeholder('No Department Assigned'),
             ])
             ->filters([
                 //
