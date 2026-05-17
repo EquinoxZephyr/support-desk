@@ -14,6 +14,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Illuminate\Support\Facades\Auth;
 
 class TicketResource extends Resource
 {
@@ -99,5 +102,20 @@ class TicketResource extends Resource
             'create' => Pages\CreateTicket::route('/create'),
             'edit' => Pages\EditTicket::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        if ($user->hasRole('super_admin')) {
+            return parent::getEloquentQuery();
+        }
+
+        if ($user->hasRole('IT Tech')) {
+            return parent::getEloquentQuery();
+        }
+
+        return parent::getEloquentQuery()->where('user_id', $user->id);
     }
 }
